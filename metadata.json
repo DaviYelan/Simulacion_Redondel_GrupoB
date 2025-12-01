@@ -1,0 +1,5 @@
+{
+  "name": "Circular Traffic Jam Simulator",
+  "description": "A physics simulation demonstrating how phantom traffic jams form in a circular vehicular system.",
+  "requestFramePermissions": []
+}
