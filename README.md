@@ -296,7 +296,7 @@ Cada experimento Monte Carlo genera las siguientes métricas:
 #### Métricas Cuantitativas
 - **`vehiculos_afectados`**: Número de vehículos que tuvieron que frenar
 - **`total_vehiculos`**: Población total $N$
-- **`porcentaje_afectados`**: $\frac{\text{vehículos\_afectados}}{N} \times 100\%$
+- **`porcentaje_afectados`**: $\frac{\text{veh\'iculos afectados}}{N} \times 100\%$
 
 #### Series Temporales
 - **`historial`**: Array de estados del sistema en cada paso $t_k = k \Delta t$
@@ -315,7 +315,7 @@ $$\mathbb{E}[\text{afectados}] = \frac{1}{N_{\text{exp}}} \sum_{i=1}^{N_{\text{e
 
 Con intervalo de confianza al 95%:
 
-$$\text{IC}_{95\%} = \bar{x} \pm 1.96 \frac{s}{\sqrt{N_{\text{exp}}}}$$
+$$IC_{95} = \bar{x} \pm 1.96 \frac{s}{\sqrt{N_{\text{exp}}}}$$
 
 donde $s$ es la desviación estándar muestral.
 
