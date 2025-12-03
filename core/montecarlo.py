@@ -8,7 +8,7 @@ except Exception:
     pd = None
 
 from core.simulacion import Simulacion
-from utils.constantes import DISTANCIA_SEGURIDAD
+from utils.constantes import DISTANCIA_SEGURIDAD, RADIO_REDONDEL, NUMERO_VEHICULOS, DT
 
 
 class MonteCarlo:
@@ -21,26 +21,28 @@ class MonteCarlo:
     """
 
     def __init__(self,
-                 num_runs: int = 100,
-                 num_vehiculos: int = None,
-                 duracion: float = 30.0,
-                 tiempo_inicio_frenado: float = 5.0,
-                 distancia_seguridad: float = None,
-                 dt: float = None):
+                num_runs: int = 100,
+                num_vehiculos: int = None,
+                radio: float = None,
+                duracion: float = 30.0,
+                tiempo_inicio_frenado: float = 5.0,
+                distancia_seguridad: float = None,
+                dt: float = None):
         self.num_runs = int(num_runs)
-        self.num_vehiculos = num_vehiculos
+        self.num_vehiculos = num_vehiculos if num_vehiculos is not None else NUMERO_VEHICULOS
+        self.radio = radio if radio is not None else RADIO_REDONDEL
         self.duracion = duracion
         self.tiempo_inicio_frenado = tiempo_inicio_frenado
         self.distancia_seguridad = distancia_seguridad if distancia_seguridad is not None else DISTANCIA_SEGURIDAD
-        self.dt = dt
+        self.dt = dt if dt is not None else DT
 
         self._runs = []  # lista de dicts con resultados por corrida
 
     def _run_single(self, seed: int):
-        sim = Simulacion(num_vehiculos=self.num_vehiculos if self.num_vehiculos is not None else None,
-                         radio=None,
+        sim = Simulacion(num_vehiculos=self.num_vehiculos,
+                         radio=self.radio,
                          distancia_seguridad=self.distancia_seguridad,
-                         dt=self.dt if self.dt is not None else None)
+                         dt=self.dt)
 
         # Ejecutar completa con la semilla
         resultado = sim.ejecutar_completa(duracion=self.duracion,
