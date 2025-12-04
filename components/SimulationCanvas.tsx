@@ -1,4 +1,4 @@
-
+﻿
 import React, { useRef, useEffect, useCallback } from 'react';
 import { Car, SimulationConfig } from '../types';
 import { TRACK_RADIUS, CAR_SIZE, CAR_WIDTH, CAR_LENGTH, CAR_PALETTE } from '../constants';
@@ -84,8 +84,10 @@ export const SimulationCanvas: React.FC<SimulationCanvasProps> = ({
       // Calculate gap (Arc distance in radians)
       let gap = nextCar.angle - car.angle;
       if (gap < 0) gap += 2 * Math.PI; // Wrap around calculation
-      // Subtract car size physically (approximation in radians) to get actual empty space
-      const physicalSizeRad = (CAR_SIZE * 3) / TRACK_RADIUS; 
+      
+      // Subtract car size physically to get actual empty space
+      // Use visual CAR_LENGTH plus a small buffer to prevent visual overlap
+      const physicalSizeRad = (CAR_LENGTH + 6) / TRACK_RADIUS; 
       gap -= physicalSizeRad;
 
       // --- Behavior Logic ---
@@ -110,10 +112,15 @@ export const SimulationCanvas: React.FC<SimulationCanvasProps> = ({
             car.state = 'braking';
             brakingCount++;
         } else {
-            // SAFE DISTANCE: ACCELERATE
+            // SAFE DISTANCE
             if (car.speed < config.maxSpeed) {
+                // ACCELERATE
                 car.speed += config.acceleration;
                 car.state = 'accelerating';
+            } else if (car.speed > config.maxSpeed) {
+                // DECELERATE (Engine braking / friction) to match new lower limit
+                car.speed = Math.max(config.maxSpeed, car.speed - config.brakingPower * 0.5);
+                car.state = 'cruising';
             } else {
                 // Cruising at max speed
                 car.state = 'cruising';
@@ -121,8 +128,10 @@ export const SimulationCanvas: React.FC<SimulationCanvasProps> = ({
         }
 
         // Prevent collision (physically cannot occupy same space)
-        if (gap <= 0.01 && car.speed > nextCar.speed) {
+        if (gap <= 0.001 && car.speed > nextCar.speed) {
              car.speed = nextCar.speed; // Match speed instantly if touching
+             // Ensure they don't overlap by forcing position behind next car
+             // (Optional simplification: just match speed is usually enough for visual if updated frequent enough)
         }
       }
 
@@ -228,12 +237,30 @@ export const SimulationCanvas: React.FC<SimulationCanvasProps> = ({
     
     ctx.shadowBlur = 0;
 
-    // Forced Stop Indicator (Hazard lights visual or Icon)
+    // Forced Stop Indicator: Hazard Lights (Intermitentes)
     if (car.isForcedStopped) {
-       ctx.strokeStyle = '#f59e0b';
-       ctx.lineWidth = 2;
-       drawRoundRect(ctx, -CAR_WIDTH / 2 - 4, -CAR_LENGTH / 2 - 4, CAR_WIDTH + 8, CAR_LENGTH + 8, 4);
-       ctx.stroke();
+       // Blink every 300ms
+       const now = Date.now();
+       if (Math.floor(now / 300) % 2 === 0) {
+           ctx.fillStyle = '#fbbf24'; // amber-400
+           ctx.shadowColor = '#f59e0b';
+           ctx.shadowBlur = 12;
+
+           const w = CAR_WIDTH;
+           const l = CAR_LENGTH;
+           const lightSize = 3;
+
+           // Front Left
+           ctx.fillRect(-w/2 - 2, -l/2 - 1, lightSize, lightSize);
+           // Front Right
+           ctx.fillRect(w/2 - 1, -l/2 - 1, lightSize, lightSize);
+           // Rear Left
+           ctx.fillRect(-w/2 - 2, l/2 - 2, lightSize, lightSize);
+           // Rear Right
+           ctx.fillRect(w/2 - 1, l/2 - 2, lightSize, lightSize);
+           
+           ctx.shadowBlur = 0;
+       }
     }
 
     ctx.restore();

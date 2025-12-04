@@ -6,7 +6,7 @@ export const CAR_LENGTH = 24; // Longer to look more like a car
 
 // Physics defaults
 export const DEFAULT_CONFIG = {
-  carCount: 10,
+  carCount: 15,
   maxSpeed: 0.02,         // Radians per frame
   acceleration: 0.0003,   // Speed increase per frame
   brakingPower: 0.0008,   // Speed decrease per frame

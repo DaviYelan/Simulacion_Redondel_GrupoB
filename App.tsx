@@ -47,7 +47,7 @@ function App() {
     setConfig(DEFAULT_CONFIG); 
     setIsRunning(true);
     setJamActive(false);
-    setJamSignal(0);
+    setJamSignal(0); // Reset jam signal prevents re-triggering on mount
     setSpeedHistory([]);
     setResetKey(prev => prev + 1); // This forces the SimulationCanvas to completely unmount and remount
   };
@@ -62,7 +62,7 @@ function App() {
                 <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
             </div>
             <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-blue-400 via-cyan-400 to-emerald-400 bg-clip-text text-transparent">
-              Simulador de Tráfico Circular
+              Simulador de Tráfico Fantasma
             </h1>
           </div>
           <a href="https://es.wikipedia.org/wiki/Onda_de_tr%C3%A1fico" target="_blank" rel="noreferrer" className="text-sm text-slate-400 hover:text-white transition-colors hidden md:flex items-center gap-2">
